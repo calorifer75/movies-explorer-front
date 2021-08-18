@@ -1,0 +1,32 @@
+.login__footer {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.login__footer span {
+  font-size: 12px;
+  line-height: 15px;
+  text-align: right;
+  color: #A0A0A0;
+  margin-right: 7px;
+}
+
+.login__footer a {
+  font-size: 12px;
+  line-height: 15px;
+  text-align: left;
+  color: #3456F3;
+}
+
+@media screen and (min-width: 768px) {
+  .login__footer span {
+    font-size: 14px;
+    line-height: 17px;
+  }
+
+  .login__footer a {
+    font-size: 14px;
+    line-height: 17px;
+  }
+}

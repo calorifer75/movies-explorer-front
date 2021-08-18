@@ -1,0 +1,17 @@
+.login__wrapper {
+  margin: 56px 30px 30px 30px;
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 auto;
+  align-items: center;
+}
+
+@media screen and (min-width: 768px) {
+  .login__wrapper {
+    margin: 0;
+    width: 396px;
+    align-items: flex-start;
+    justify-content: center;
+  }
+}
+

@@ -1,0 +1,22 @@
+.login__submit {
+  background: #3456F3;
+  border-radius: 3px;
+  border: none;
+  font-family: Inter, Arial, Helvetica, sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 15px;
+  color: #fff;
+  padding: 15px;
+  width: 100%;
+  cursor: pointer;
+}
+
+@media screen and (min-width: 768px) {
+  .login__submit {
+    margin-top: 49px;
+    font-size: 14px;
+    line-height: 17px;
+  }
+}
