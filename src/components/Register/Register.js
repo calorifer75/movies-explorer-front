@@ -1,7 +1,20 @@
+import React from 'react';
 import { Link } from 'react-router-dom';
 import logoImg from '../../images/logo.svg';
 
-function Register() {
+function Register(props) {
+  const [values, setValues] = React.useState({});
+
+  // Управление инпутами
+  function handleChange(evt) {
+    setValues({ ...values, [evt.target.name]: evt.target.value });
+  }
+
+  function onRegister(evt) {
+    evt.preventDefault();
+    props.onRegister(values.userEmail, values.userPassword, values.userName);
+  }
+
   return (
     <main className='login'>
       <div className='login__wrapper'>
@@ -9,7 +22,12 @@ function Register() {
           <img src={logoImg} alt='Логотип'></img>
         </Link>
         <h1 className='login__title'>Добро пожаловать!</h1>
-        <form className='login__form' name='registerForm' autoComplete='off'>
+        <form
+          className='login__form'
+          name='registerForm'
+          autoComplete='off'
+          onSubmit={onRegister}
+        >
           <div style={{ width: 'inherit', backgroundColor: 'inherit' }}>
             <div className='login__form-line'>
               <label className='login__label' htmlFor='userName'>
@@ -22,6 +40,7 @@ function Register() {
                 id='userName'
                 placeholder='Имя'
                 required
+                onChange={handleChange}
               ></input>
             </div>
             <div className='login__form-line'>
@@ -35,6 +54,7 @@ function Register() {
                 id='userEmail'
                 placeholder='E-Mail'
                 required
+                onChange={handleChange}
               ></input>
             </div>
             <div className='login__form-line'>
@@ -48,6 +68,7 @@ function Register() {
                 id='userPassword'
                 placeholder='Пароль'
                 required
+                onChange={handleChange}
               ></input>
               <p className='error'>Что-то пошло не так...</p>
             </div>

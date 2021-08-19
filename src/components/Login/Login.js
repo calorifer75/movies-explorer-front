@@ -1,7 +1,20 @@
+import React from 'react';
 import { Link } from 'react-router-dom';
 import logoImg from '../../images/logo.svg';
 
-function Login() {
+function Login(props) {
+  const [values, setValues] = React.useState({});
+
+  // Управление инпутами
+  function handleChange(evt) {
+    setValues({ ...values, [evt.target.name]: evt.target.value });
+  }
+
+  function onLogin(evt) {
+    evt.preventDefault();
+    props.onLogin(values.userEmail, values.userPassword);
+  }
+
   return (
     <main className='login'>
       <div className='login__wrapper'>
@@ -9,7 +22,12 @@ function Login() {
           <img className='login__logo' src={logoImg} alt='Логотип'></img>
         </Link>
         <h1 className='login__title'>Рады видеть!</h1>
-        <form className='login__form' name='loginForm' autoComplete='off'>
+        <form
+          className='login__form'
+          name='loginForm'
+          autoComplete='off'
+          onSubmit={onLogin}
+        >
           <div style={{ width: 'inherit' }}>
             <div className='login__form-line'>
               <label className='login__label' htmlFor='userEmail'>
@@ -22,7 +40,8 @@ function Login() {
                 id='userEmail'
                 required
                 placeholder='E-Mail'
-              ></input>              
+                onChange={handleChange}
+              ></input>
             </div>
             <div className='login__form-line'>
               <label className='login__label' htmlFor='userPassword'>
@@ -35,7 +54,8 @@ function Login() {
                 id='userPassword'
                 placeholder='Пароль'
                 required
-              ></input>              
+                onChange={handleChange}
+              ></input>
             </div>
             <div className='login__divider'></div>
           </div>

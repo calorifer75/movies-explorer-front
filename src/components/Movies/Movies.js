@@ -70,7 +70,7 @@ const cardList = [
 function Movies() {
   return (
     <>
-      <Header registerLinkHidden={true} loginLinkHidden={true} />
+      <Header />
       <SearchForm />
       <MoviesCardList cardList={cardList} />
       <MoviesMoreCards />

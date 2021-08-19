@@ -55,7 +55,7 @@ const cardList = [
 function SavedMovies() {
   return (
     <>
-      <Header registerLinkHidden={true} loginLinkHidden={true}/>
+      <Header />
       <SearchForm />
       <MoviesCardList cardList={cardList} />
       <div className='saved-movies__divider'></div>
