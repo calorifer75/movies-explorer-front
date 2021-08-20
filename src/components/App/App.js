@@ -12,6 +12,7 @@ import NotFound from '../NotFound/NotFound';
 import Preloader from '../Preloader/Preloader';
 import * as auth from '../../utils/Auth';
 import * as api from '../../utils/MainApi';
+import * as moviesApi from '../../utils/MoviesApi';
 import CurrentUserContext from '../../contexts/CurrentUserContext';
 import ProtectedRoute from '../ProtecterRoute/ProtectedRoute';
 
@@ -20,6 +21,9 @@ function App() {
   const [currentUser, setCurrentUser] = React.useState({ name: '', email: '' });
   const [loggedIn, setLoggedIn] = React.useState(false);
   const [serverErrorMsg, setServerErrorMsg] = React.useState('');
+  const [movies, setMovies] = React.useState([]);
+  const [renderMovies, setRenderMovies] = React.useState([]);
+  const [displayMoreMovies, setDisplayMoreMovies] = React.useState(true);
 
   // Нажатие кнопки "Вход"
   function handleLogin(email, password) {
@@ -114,6 +118,60 @@ function App() {
       });
   }
 
+  // Получение фильмов
+  function handleGetMovies(name) {
+    moviesApi
+      .getMovies()
+      .then((res) => {
+        const f = res.filter((item) => {
+          return item.nameRU.toUpperCase().includes(name.toUpperCase());
+        });
+        localStorage.setItem('movies', JSON.stringify(f));
+        setMovies(f);          
+      })
+      .catch((err) => {
+        setServerErrorMsg(
+          'Во время запроса произошла ошибка. Возможно, проблема с соединением ' +
+            'или сервер недоступен.Подождите немного и попробуйте ещё раз'
+        );
+      });
+  }
+
+  // Отрисовка фильмов
+  React.useEffect(() => {
+    if (document.documentElement.clientWidth < 768) {
+      setRenderMovies(movies.slice(0, 5));
+    } else if (document.documentElement.clientWidth < 1280) {
+      setRenderMovies(movies.slice(0, 2));
+    } else {
+      setRenderMovies(movies.slice(0, 4));
+    }
+  }, [movies]);
+
+  // Отрисовка внопки "Еще"
+  React.useEffect(() => {
+    if (movies.length === renderMovies.length) {
+      setDisplayMoreMovies(false);
+    } else setDisplayMoreMovies(true);
+  }, [movies, renderMovies]);
+
+  // Кнопка "Еще" отрисовывает еще фильмов
+  function renderMoreMovies() {
+    if (movies.length === renderMovies.length) {
+      return;
+    }
+
+    const length = renderMovies.length;
+
+    if (document.documentElement.clientWidth < 768) {
+      setRenderMovies([...renderMovies, ...movies.slice(length, length + 5)]);
+    } else if (document.documentElement.clientWidth < 1280) {
+      setRenderMovies([...renderMovies, ...movies.slice(length, length + 2)]);
+    } else {
+      setRenderMovies([...renderMovies, ...movies.slice(length, length + 4)]);
+    }
+  }
+
   return (
     <CurrentUserContext.Provider
       value={{ currentUser, loggedIn, serverErrorMsg, setServerErrorMsg }}
@@ -124,7 +182,12 @@ function App() {
             <Main />
           </Route>
           <ProtectedRoute exact path='/movies' loggedIn={loggedIn}>
-            <Movies />
+            <Movies
+              onGetMovies={handleGetMovies}
+              renderMovies={renderMovies}
+              renderMoreMovies={renderMoreMovies}
+              displayMoreMovies={displayMoreMovies}
+            />
           </ProtectedRoute>
           <ProtectedRoute exact path='/saved-movies' loggedIn={loggedIn}>
             <SavedMovies />
