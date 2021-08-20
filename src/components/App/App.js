@@ -19,6 +19,7 @@ function App() {
   const history = useHistory();
   const [currentUser, setCurrentUser] = React.useState({ name: '', email: '' });
   const [loggedIn, setLoggedIn] = React.useState(false);
+  const [serverErrorMsg, setServerErrorMsg] = React.useState('');
 
   // Нажатие кнопки "Вход"
   function handleLogin(email, password) {
@@ -31,8 +32,11 @@ function App() {
       })
       .catch((err) => {
         err.then((res) => {
-          // TODO: отобразить ошибку на форме ввода
-          console.log(res);
+          if (res.validation) {
+            setServerErrorMsg(`Ошибка: ${res.validation.body.message}`);
+          } else {
+            setServerErrorMsg(res.message);
+          }
         });
       });
   }
@@ -46,8 +50,11 @@ function App() {
       })
       .catch((err) => {
         err.then((res) => {
-          // TODO: отобразить ошибку на форме ввода
-          console.log(res);
+          if (res.validation) {
+            setServerErrorMsg(`Ошибка: ${res.validation.body.message}`);
+          } else {
+            setServerErrorMsg(res.message);
+          }
         });
       });
   }
@@ -96,11 +103,21 @@ function App() {
         setCurrentUser(userInfo);
         history.goBack();
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        err.then((res) => {
+          if (res.validation) {
+            setServerErrorMsg(`Ошибка: ${res.validation.body.message}`);
+          } else {
+            setServerErrorMsg(res.message);
+          }
+        });
+      });
   }
 
   return (
-    <CurrentUserContext.Provider value={{currentUser, loggedIn}}>
+    <CurrentUserContext.Provider
+      value={{ currentUser, loggedIn, serverErrorMsg, setServerErrorMsg }}
+    >
       <div className='page'>
         <Switch>
           <Route exact path='/'>

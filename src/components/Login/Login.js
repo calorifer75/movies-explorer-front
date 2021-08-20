@@ -1,9 +1,17 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import logoImg from '../../images/logo.svg';
+import ServerErrorMsg from '../ServerErrorMsg/ServerErrorMsg';
+import CurrentUserContext from '../../contexts/CurrentUserContext';
 
 function Login(props) {
   const [values, setValues] = React.useState({});
+  
+  const {setServerErrorMsg} = React.useContext(CurrentUserContext);
+  React.useEffect(() => {    
+    setServerErrorMsg('');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Управление инпутами
   function handleChange(evt) {
@@ -59,9 +67,12 @@ function Login(props) {
             </div>
             <div className='login__divider'></div>
           </div>
-          <button className='login__submit' type='submit'>
-            Войти
-          </button>
+          <div style={{width: 'inherit'}}>
+            <ServerErrorMsg />
+            <button className='login__submit' type='submit'>
+              Войти
+            </button>
+          </div>
         </form>
         <footer className='login__footer'>
           <span>Еще не зарегистрированы?</span>

@@ -1,9 +1,17 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import logoImg from '../../images/logo.svg';
+import ServerErrorMsg from '../ServerErrorMsg/ServerErrorMsg';
+import CurrentUserContext from '../../contexts/CurrentUserContext';
 
 function Register(props) {
   const [values, setValues] = React.useState({});
+
+  const {setServerErrorMsg} = React.useContext(CurrentUserContext);
+  React.useEffect(() => {    
+    setServerErrorMsg('');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Управление инпутами
   function handleChange(evt) {
@@ -73,6 +81,7 @@ function Register(props) {
               <p className='error'>Что-то пошло не так...</p>
             </div>
           </div>
+          <ServerErrorMsg />
           <button className='login__submit' type='submit'>
             Зарегистрироваться
           </button>

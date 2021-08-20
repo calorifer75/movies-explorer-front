@@ -15,7 +15,6 @@
 
 @media screen and (min-width: 768px) {
   .login__submit {
-    margin-top: 49px;
     font-size: 14px;
     line-height: 17px;
   }

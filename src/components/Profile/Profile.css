@@ -29,7 +29,7 @@
   flex-direction: column;
   justify-content: space-between;
   align-items: center;  
-  margin-bottom: 16px;
+  margin-bottom: 10px;
 }
 
 .profile__form-line {
@@ -80,17 +80,26 @@
 }
 
 .profile__input:focus {
-  border-bottom: 1px solid #3456F3;
+  border-bottom: 1px solid #3456F3;  
 }
 
 .profile__submit {  
+  width: fit-content;
   cursor: pointer;
   border: none;
+  border-bottom: 1px solid transparent;
   font-family: Inter, Arial, Helvetica, sans-serif;
   font-style: normal;
   font-weight: normal;
   font-size: 12px;
-  line-height: 15px;  
+  line-height: 15px;
+  padding: 0 0 6px 0;
+  margin-top: 10px;
+  transition: border .2s linear;
+}
+
+.profile__submit:hover {
+  border-bottom: 1px solid #000;
 }
 
 .profile__exit {
@@ -101,7 +110,14 @@
   line-height: 15px;
   color: #EE3465;
   cursor: pointer;
+  padding: 0 0 6px 0;
   border: none;
+  border-bottom: 1px solid transparent;  
+  transition: border .2s linear;
+}
+
+.profile__exit:hover {
+  border-bottom: 1px solid #EE3465;
 }
 
 @media screen and (min-width: 768px) {

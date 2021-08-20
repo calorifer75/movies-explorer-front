@@ -2,13 +2,19 @@ import React from 'react';
 import './Profile.css';
 import Header from '../Header/Header';
 import CurrentUserContext from '../../contexts/CurrentUserContext';
+import ServerErrorMsg from '../ServerErrorMsg/ServerErrorMsg';
 
 function Profile(props) {
   const [name, setName] = React.useState('');
   const [email, setEmail] = React.useState('');
 
   // Получение инфы о пользователе из контекста
-  const {currentUser} = React.useContext(CurrentUserContext);
+  const { currentUser, setServerErrorMsg } =
+    React.useContext(CurrentUserContext);
+  React.useEffect(() => {
+    setServerErrorMsg('');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Синхронизация локального стейта с CurrentUser
   React.useEffect(() => {
@@ -19,10 +25,10 @@ function Profile(props) {
   // Изменение инпутов
   function handleChange(evt) {
     switch (evt.target.name) {
-      case "userName":
+      case 'userName':
         setName(evt.target.value);
         break;
-      case "userEmail":
+      case 'userEmail':
         setEmail(evt.target.value);
         break;
       default:
@@ -79,9 +85,18 @@ function Profile(props) {
                 ></input>
               </div>
             </div>
-            <button className='profile__submit' type='submit'>
-              Редактировать
-            </button>
+            <div
+              style={{
+                display: 'inherit',
+                flexDirection: 'inherit',
+                alignItems: 'inherit',
+              }}
+            >
+              <ServerErrorMsg centered={true}/>
+              <button className='profile__submit' type='submit'>
+                Редактировать
+              </button>
+            </div>
           </form>
           <button
             className='profile__exit'
