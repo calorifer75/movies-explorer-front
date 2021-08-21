@@ -10,10 +10,14 @@ function Movies(props) {
     <>
       <Header />
       <SearchForm onGetMovies={props.onGetMovies} />
-      <MoviesCardList renderMovies={props.renderMovies} />
+      <MoviesCardList
+        renderMovies={props.renderMovies}
+        preloaderActive={props.preloaderActive}
+        preloaderNotFound={props.preloaderNotFound}
+      />
       <MoviesMoreCards
         renderMoreMovies={props.renderMoreMovies}
-        displayMoreMovies={props.displayMoreMovies}
+        displayMoreMovies={props.displayMoreMovies}        
       />
       <Footer />
     </>

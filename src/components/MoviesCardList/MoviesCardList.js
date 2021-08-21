@@ -1,12 +1,17 @@
 import './MoviesCardList.css';
 import MoviesCard from '../MoviesCard/MoviesCard';
+import Preloader from '../Preloader/Preloader';
 
 function MoviesCardList(props) {
   const server = ' https://api.nomoreparties.co';
 
   return (
     <section className='movies-card-list'>
-      <div className='movies-card-list__wrapper'>
+      <Preloader
+        preloaderActive={props.preloaderActive}
+        preloaderNotFound={props.preloaderNotFound}
+      />
+      <div className='movies-card-list__wrapper'>      
         {props.renderMovies.map((movie, i) => {
           return (
             <MoviesCard
@@ -14,6 +19,7 @@ function MoviesCardList(props) {
               filmSrc={server + movie.image.url}
               filmName={movie.nameRU}
               filmTime={movie.duration}
+              filmTrailer={movie.trailerLink}
               saved={false}
               allowDelete={false}
             />

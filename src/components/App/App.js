@@ -9,7 +9,6 @@ import Profile from '../Profile/Profile';
 import Login from '../Login/Login';
 import Register from '../Register/Register';
 import NotFound from '../NotFound/NotFound';
-import Preloader from '../Preloader/Preloader';
 import * as auth from '../../utils/Auth';
 import * as api from '../../utils/MainApi';
 import * as moviesApi from '../../utils/MoviesApi';
@@ -24,6 +23,8 @@ function App() {
   const [movies, setMovies] = React.useState([]);
   const [renderMovies, setRenderMovies] = React.useState([]);
   const [displayMoreMovies, setDisplayMoreMovies] = React.useState(true);
+  const [preloaderActive, setPreloaderActive] = React.useState(false);
+  const [preloaderNotFound, setPreloaderNotFound] = React.useState(false);
 
   // Нажатие кнопки "Вход"
   function handleLogin(email, password) {
@@ -67,6 +68,7 @@ function App() {
   function handleExit() {
     if (localStorage.getItem('token')) {
       localStorage.removeItem('token');
+      localStorage.removeItem('movies');
       setLoggedIn(false);
       history.push('/');
     }
@@ -118,8 +120,12 @@ function App() {
       });
   }
 
-  // Получение фильмов
+  // Получение фильмов от сервера
   function handleGetMovies(name) {
+    setRenderMovies([]);
+    setServerErrorMsg('');
+    setPreloaderNotFound(false);
+    setPreloaderActive(true);
     moviesApi
       .getMovies()
       .then((res) => {
@@ -127,15 +133,30 @@ function App() {
           return item.nameRU.toUpperCase().includes(name.toUpperCase());
         });
         localStorage.setItem('movies', JSON.stringify(f));
-        setMovies(f);          
+        setPreloaderActive(false);
+        setMovies(f);
+        setPreloaderNotFound(f.length === 0);
       })
       .catch((err) => {
+        setPreloaderActive(false);
+        setPreloaderNotFound(false);
         setServerErrorMsg(
           'Во время запроса произошла ошибка. Возможно, проблема с соединением ' +
             'или сервер недоступен.Подождите немного и попробуйте ещё раз'
         );
       });
   }
+
+  // получение фильмов из локального хранилища
+  React.useEffect(() => {
+    if (loggedIn) {
+      const jsonMovies = localStorage.getItem('movies');
+      if (jsonMovies) {
+        setMovies(JSON.parse(jsonMovies));
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loggedIn]);
 
   // Отрисовка фильмов
   React.useEffect(() => {
@@ -187,6 +208,8 @@ function App() {
               renderMovies={renderMovies}
               renderMoreMovies={renderMoreMovies}
               displayMoreMovies={displayMoreMovies}
+              preloaderActive={preloaderActive}
+              preloaderNotFound={preloaderNotFound}
             />
           </ProtectedRoute>
           <ProtectedRoute exact path='/saved-movies' loggedIn={loggedIn}>
@@ -208,7 +231,6 @@ function App() {
             <NotFound />
           </Route>
         </Switch>
-        <Preloader />
       </div>
     </CurrentUserContext.Provider>
   );

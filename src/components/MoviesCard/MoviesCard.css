@@ -1,7 +1,14 @@
 .movies-card {
   display: flex;
   flex-direction: column;
+  position: relative;
   width: 100%;  
+}
+
+.movies-card__trailer-link {
+  position: absolute;
+  width: 100%;
+  height: 70%;
 }
 
 .movies-card__img {
