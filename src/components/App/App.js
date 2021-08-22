@@ -22,9 +22,11 @@ function App() {
   const [serverErrorMsg, setServerErrorMsg] = React.useState('');
   const [movies, setMovies] = React.useState([]);
   const [renderMovies, setRenderMovies] = React.useState([]);
+  const [savedMovies, setSavedMovies] = React.useState([]);
   const [displayMoreMovies, setDisplayMoreMovies] = React.useState(true);
   const [preloaderActive, setPreloaderActive] = React.useState(false);
   const [preloaderNotFound, setPreloaderNotFound] = React.useState(false);
+  const imagesServer = 'https://api.nomoreparties.co';
 
   // Нажатие кнопки "Вход"
   function handleLogin(email, password) {
@@ -120,6 +122,17 @@ function App() {
       });
   }
 
+  // Заполнение renderMovies при открытии страницы
+  function setRenderMoviesFirstTime(f) {
+    if (document.documentElement.clientWidth < 768) {
+      setRenderMovies(f.slice(0, 5));
+    } else if (document.documentElement.clientWidth < 1280) {
+      setRenderMovies(f.slice(0, 2));
+    } else {
+      setRenderMovies(f.slice(0, 4));
+    }
+  }
+
   // Получение фильмов от сервера
   function handleGetMovies(name, short) {
     setRenderMovies([]);
@@ -129,17 +142,35 @@ function App() {
     moviesApi
       .getMovies()
       .then((res) => {
+        // Фильтрация полученных фильмов
         const f = res.filter((item) => {
-          const nameMatch = item.nameRU.toUpperCase().includes(name.toUpperCase());
+          const nameMatch = item.nameRU
+            .toUpperCase()
+            .includes(name.toUpperCase());
           const shortMatch = short ? parseInt(item.duration) <= 40 : true;
           return nameMatch && shortMatch;
         });
-        localStorage.setItem('movies', JSON.stringify(f));
+
+        // Дополнение массива нужной информацией
+        f.forEach((element) => {
+          element.image.url = imagesServer + element.image.url;
+          element.image.formats.thumbnail.url =
+            imagesServer + element.image.formats.thumbnail.url;
+
+          if (savedMovies.find((savMov) => savMov.id === element.id)) {
+            element.saved = true;
+          } else element.saved = false;
+        });                
+
         setPreloaderActive(false);
-        setMovies(f);
         setPreloaderNotFound(f.length === 0);
+
+        localStorage.setItem('movies', JSON.stringify(f));
+
+        setRenderMoviesFirstTime(f);
+        setMovies(f);
       })
-      .catch((err) => {
+      .catch((error) => {
         setPreloaderActive(false);
         setPreloaderNotFound(false);
         setServerErrorMsg(
@@ -154,22 +185,85 @@ function App() {
     if (loggedIn) {
       const jsonMovies = localStorage.getItem('movies');
       if (jsonMovies) {
-        setMovies(JSON.parse(jsonMovies));
+        const f = JSON.parse(jsonMovies);
+        setMovies(f);
+        setRenderMoviesFirstTime(f);
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loggedIn]);
 
-  // Отрисовка фильмов
+  // Обновление renderMovies при изменении movies
   React.useEffect(() => {
-    if (document.documentElement.clientWidth < 768) {
-      setRenderMovies(movies.slice(0, 5));
-    } else if (document.documentElement.clientWidth < 1280) {
-      setRenderMovies(movies.slice(0, 2));
-    } else {
-      setRenderMovies(movies.slice(0, 4));
-    }
+    renderMovies.forEach(renMov => {
+      const mov = movies.find(m => m.id === renMov.id);
+      Object.assign(renMov, mov);
+    });
+    setRenderMovies([...renderMovies]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [movies]);
+
+  // Получение сохраненных фильмов из своей базы
+  React.useEffect(() => {
+    api
+      .getSavedMovies()
+      .then((res) => {
+        res.forEach((element) => {
+          element.image = { url: element.image };
+
+          element.trailerLink = element.trailer;
+          delete element.trailer;
+
+          element.id = element.movieId;
+          delete element.movieId;          
+        });
+
+        setSavedMovies(res);
+      })
+      .catch((error) => {
+        error.then((res) => {
+          if (res.message.includes('selebrate')) {
+            setServerErrorMsg(res.validation.body.message);
+          } else {
+            setServerErrorMsg(res.message);
+          }
+        });
+      });
+  }, []);
+
+  // Сохранение фильма к себе в базу
+  async function handleSaveMovie(id) {
+    const movie = movies.find((element) => element.id === id);
+
+    const movieToSave = {
+      country: movie.country,
+      director: movie.director,
+      duration: movie.duration,
+      year: movie.year,
+      description: movie.description,
+      image: movie.image.url,
+      trailer: movie.trailerLink,
+      thumbnail: movie.image.formats.thumbnail.url,
+      movieId: movie.id,
+      nameRU: movie.nameRU,
+      nameEN: movie.nameEN,
+    };
+
+    try {
+      await api.saveMovie(movieToSave);
+      movie.saved = !movie.saved;
+      setMovies([...movies]);      
+      setSavedMovies([...savedMovies, movie]);
+      localStorage.setItem('movies', JSON.stringify(movies));
+    } catch (error) {
+      error.then((res) => {
+        if (res.message.includes('selebrate')) {
+          setServerErrorMsg(res.validation.body.message);
+        } else {
+          setServerErrorMsg(res.message);
+        }
+      });
+    }
+  }
 
   // Отрисовка внопки "Еще"
   React.useEffect(() => {
@@ -207,6 +301,7 @@ function App() {
           <ProtectedRoute exact path='/movies' loggedIn={loggedIn}>
             <Movies
               onGetMovies={handleGetMovies}
+              onSaveMovie={handleSaveMovie}
               renderMovies={renderMovies}
               renderMoreMovies={renderMoreMovies}
               displayMoreMovies={displayMoreMovies}
@@ -215,7 +310,7 @@ function App() {
             />
           </ProtectedRoute>
           <ProtectedRoute exact path='/saved-movies' loggedIn={loggedIn}>
-            <SavedMovies />
+            <SavedMovies savedMovies={savedMovies} />
           </ProtectedRoute>
           <ProtectedRoute exact path='/profile' loggedIn={loggedIn}>
             <Profile

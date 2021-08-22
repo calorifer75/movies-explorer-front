@@ -3,8 +3,6 @@ import MoviesCard from '../MoviesCard/MoviesCard';
 import Preloader from '../Preloader/Preloader';
 
 function MoviesCardList(props) {
-  const server = ' https://api.nomoreparties.co';
-
   return (
     <section className='movies-card-list'>
       <Preloader
@@ -16,12 +14,14 @@ function MoviesCardList(props) {
           return (
             <MoviesCard
               key={movie.id}
-              filmSrc={server + movie.image.url}
+              id={movie.id}
+              filmSrc={movie.image.url}
               filmName={movie.nameRU}
               filmTime={movie.duration}
               filmTrailer={movie.trailerLink}
-              saved={false}
-              allowDelete={false}
+              filmSaved={movie.saved}
+              allowDelete={movie.allowDelete}
+              onSaveMovie={props.onSaveMovie}
             />
           );
         })}

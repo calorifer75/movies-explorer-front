@@ -1,10 +1,14 @@
 import './MoviesCard.css';
 
 function MoviesCard(props) {
-  let saveButtonStyle = props.saved
+  function onSaveMovie() {
+    props.onSaveMovie(props.id);
+  }
+
+  let saveButtonStyle = props.filmSaved
     ? 'movies-card__save_color'
     : 'movies-card__save_white';
-  
+
   if (props.allowDelete) saveButtonStyle = 'movies-card__save_x';
 
   let filmTime = parseInt(props.filmTime);
@@ -30,7 +34,10 @@ function MoviesCard(props) {
 
       <div className='movies-card__info-panel'>
         <p className='movies-card__film-name'>{props.filmName}</p>
-        <button className={`movies-card__save ${saveButtonStyle}`}></button>
+        <button
+          className={`movies-card__save ${saveButtonStyle}`}
+          onClick={onSaveMovie}
+        ></button>
       </div>
 
       <p className='movies-card__film-time'>{filmTime}</p>

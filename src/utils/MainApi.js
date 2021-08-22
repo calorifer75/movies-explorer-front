@@ -30,3 +30,28 @@ export function setUserInfo(name, email) {
     body: JSON.stringify({ name, email }),
   }).then(fetchHandle);
 }
+
+export function saveMovie(movie) {
+  const token = localStorage.getItem('token');
+  
+  return fetch(`${BASE_URL}/movies`, {
+    method: 'POST',
+    headers: {
+      "Content-Type": "application/json",
+      authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(movie),
+  }).then(fetchHandle);
+}
+
+export function getSavedMovies() {
+  const token = localStorage.getItem('token');
+  
+  return fetch(`${BASE_URL}/movies`, {
+    method: 'GET',
+    headers: {
+      "Content-Type": "application/json",
+      authorization: `Bearer ${token}`,
+    },
+  }).then(fetchHandle);
+}
