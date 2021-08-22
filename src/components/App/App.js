@@ -121,7 +121,7 @@ function App() {
   }
 
   // Получение фильмов от сервера
-  function handleGetMovies(name) {
+  function handleGetMovies(name, short) {
     setRenderMovies([]);
     setServerErrorMsg('');
     setPreloaderNotFound(false);
@@ -130,7 +130,9 @@ function App() {
       .getMovies()
       .then((res) => {
         const f = res.filter((item) => {
-          return item.nameRU.toUpperCase().includes(name.toUpperCase());
+          const nameMatch = item.nameRU.toUpperCase().includes(name.toUpperCase());
+          const shortMatch = short ? parseInt(item.duration) <= 40 : true;
+          return nameMatch && shortMatch;
         });
         localStorage.setItem('movies', JSON.stringify(f));
         setPreloaderActive(false);

@@ -3,15 +3,22 @@ import './SearchForm.css';
 import FilterCheckbox from '../FilterCheckbox/FilterCheckbox';
 
 function SearchForm(props) {
-  const [filmName, setFilmName] = React.useState('');
+  const [values, setValues] = React.useState({});
 
   function handleChange(evt) {
-    setFilmName(evt.target.value);
+    setValues({ ...values, [evt.target.name]: evt.target.value });
+  }
+
+  function handleCheckBox(checked) {
+    setValues({ ...values, filmShort: checked });
   }
 
   function onGetMovies(evt) {
     evt.preventDefault();
-    props.onGetMovies(filmName);
+    props.onGetMovies(
+      values.filmName,
+      values.filmShort ? values.filmShort : false
+    );
   }
 
   return (
@@ -31,7 +38,7 @@ function SearchForm(props) {
             onChange={handleChange}
           ></input>
           <button className='search-form__submit' type='submit'></button>
-          <FilterCheckbox />
+          <FilterCheckbox onChange={handleCheckBox} />
         </form>
       </div>
     </section>
