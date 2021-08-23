@@ -22,6 +22,7 @@ function MoviesCardList(props) {
               filmTrailer={movie.trailerLink}
               filmSaved={movie.saved}
               allowDelete={movie.allowDelete}
+              hidden={movie.hidden}
               onLikeButtonClick={props.onLikeButtonClick}
             />
           );

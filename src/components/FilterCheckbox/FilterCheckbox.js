@@ -1,3 +1,4 @@
+import React from 'react';
 import './FilterCheckbox.css';
 
 function FilterCheckbox(props) {
@@ -10,7 +11,7 @@ function FilterCheckbox(props) {
       <input
         id='short-meters'
         type='checkbox'
-        defaultValue={false}
+        defaultChecked={props.filmShort}
         onChange={onChange}
       />
       <span className='filter-checkbox__box-green'>

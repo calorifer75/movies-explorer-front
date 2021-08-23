@@ -26,6 +26,14 @@ function App() {
   const [displayMoreMovies, setDisplayMoreMovies] = React.useState(true);
   const [preloaderActive, setPreloaderActive] = React.useState(false);
   const [preloaderNotFound, setPreloaderNotFound] = React.useState(false);
+  const [searchMoviesState, setSearchMoviesState] = React.useState({
+    filmName: '',
+    filmShort: false,
+  });
+  const [searchSavedMoviesState, setSearchSavedMoviesState] = React.useState({
+    filmName: '',
+    filmShort: false,
+  });
   const imagesServer = 'https://api.nomoreparties.co';
 
   // Нажатие кнопки "Вход"
@@ -52,8 +60,8 @@ function App() {
         handleLogin(email, password);
       })
       .catch((err) => {
-        err.then((res) => {          
-          setServerErrorMsg('Ошибка! ' + res.message);          
+        err.then((res) => {
+          setServerErrorMsg('Ошибка! ' + res.message);
         });
       });
   }
@@ -119,6 +127,22 @@ function App() {
     } else {
       setRenderMovies(f.slice(0, 4));
     }
+  }
+
+  // Фильтрация сохраненных фильмов
+  function handleFilterMovies(name, short) {
+    const f = savedMovies.map((item) => {
+      const nameMatch = item.nameRU.toUpperCase().includes(name.toUpperCase());
+      const shortMatch = short ? parseInt(item.duration) <= 40 : true;
+      if (nameMatch && shortMatch) {
+        item.hidden = false;
+      } else {
+        item.hidden = true;
+      }
+      return item;
+    });
+
+    setSavedMovies(f);
   }
 
   // Получение фильмов от сервера
@@ -215,7 +239,13 @@ function App() {
   }, []);
 
   // Сохранение фильма к себе в базу
-  async function handleSaveMovie({movieId}) {
+  async function handleSaveMovie({ movieId }) {
+    const savedMovie = savedMovies.find((m) => m.id === movieId);
+    if (savedMovie) {
+      handleDeleteMovie({ _id: savedMovie._id, movieId: movieId });
+      return;
+    }
+
     const movie = movies.find((element) => element.id === movieId);
 
     const movieToSave = {
@@ -233,8 +263,9 @@ function App() {
     };
 
     try {
-      await api.saveMovie(movieToSave);
+      const savedMovie = await api.saveMovie(movieToSave);
       movie.saved = !movie.saved;
+      movie._id = savedMovie._id;
       setMovies([...movies]);
       setSavedMovies([...savedMovies, movie]);
       localStorage.setItem('movies', JSON.stringify(movies));
@@ -246,14 +277,16 @@ function App() {
   }
 
   // Удаление фильма из своей базы
-  async function handleDeleteMovie({_id, movieId}) {
+  async function handleDeleteMovie({ _id, movieId }) {
     try {
       await api.deleteMovie(_id);
       setSavedMovies(savedMovies.filter((m) => m.id !== movieId));
       const movie = movies.find((m) => m.id === movieId);
-      movie.saved = false;
-      setMovies([...movies]);
-      localStorage.setItem('movies', JSON.stringify(movies));
+      if (movie) {
+        movie.saved = false;
+        setMovies([...movies]);
+        localStorage.setItem('movies', JSON.stringify(movies));
+      }
     } catch (error) {
       error.then((res) => {
         setServerErrorMsg('Ошибка! ' + res.message);
@@ -303,12 +336,17 @@ function App() {
               displayMoreMovies={displayMoreMovies}
               preloaderActive={preloaderActive}
               preloaderNotFound={preloaderNotFound}
+              searchMoviesState={searchMoviesState}
+              setSearchMoviesState={setSearchMoviesState}
             />
           </ProtectedRoute>
           <ProtectedRoute exact path='/saved-movies' loggedIn={loggedIn}>
             <SavedMovies
               savedMovies={savedMovies}
               onDeleteMovie={handleDeleteMovie}
+              onGetMovies={handleFilterMovies}
+              searchSavedMoviesState={searchSavedMoviesState}
+              setSearchSavedMoviesState={setSearchSavedMoviesState}
             />
           </ProtectedRoute>
           <ProtectedRoute exact path='/profile' loggedIn={loggedIn}>

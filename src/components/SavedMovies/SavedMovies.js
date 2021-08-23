@@ -8,11 +8,15 @@ function SavedMovies(props) {
   props.savedMovies.forEach((element) => {
     element.allowDelete = true;
   });
-
+  
   return (
     <>
       <Header />
-      <SearchForm />
+      <SearchForm
+        onGetMovies={props.onGetMovies}
+        searchSavedMoviesState={props.searchSavedMoviesState}
+        setSearchSavedMoviesState={props.setSearchSavedMoviesState}
+      />
       <MoviesCardList
         renderMovies={props.savedMovies}
         onLikeButtonClick={props.onDeleteMovie}

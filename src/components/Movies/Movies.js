@@ -13,7 +13,11 @@ function Movies(props) {
   return (
     <>
       <Header />
-      <SearchForm onGetMovies={props.onGetMovies} />
+      <SearchForm
+        onGetMovies={props.onGetMovies}
+        searchMoviesState={props.searchMoviesState}
+        setSearchMoviesState={props.setSearchMoviesState}
+      />
       <MoviesCardList
         onLikeButtonClick={props.onSaveMovie}
         renderMovies={props.renderMovies}

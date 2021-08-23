@@ -17,7 +17,7 @@ function MoviesCard(props) {
   filmTime = `${h}ч. ${m} мин.`;
 
   return (
-    <div className='movies-card'>
+    <div className={`movies-card ${props.hidden ? 'hidden' : ''}`}>
       {/* eslint-disable-next-line jsx-a11y/anchor-has-content */}
       <a
         className='movies-card__trailer-link'

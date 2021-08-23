@@ -3,22 +3,44 @@ import './SearchForm.css';
 import FilterCheckbox from '../FilterCheckbox/FilterCheckbox';
 
 function SearchForm(props) {
-  const [values, setValues] = React.useState({});
-
-  function handleChange(evt) {
-    setValues({ ...values, [evt.target.name]: evt.target.value });
+  let filmName, filmShort;
+  
+  if (props.searchMoviesState) {
+    filmName = props.searchMoviesState.filmName;
+    filmShort = props.searchMoviesState.filmShort;
+  } else {
+    filmName = props.searchSavedMoviesState.filmName;
+    filmShort = props.searchSavedMoviesState.filmShort;
+  }
+  
+  function handleChange(evt) {    
+    filmName = evt.target.value;
   }
 
-  function handleCheckBox(checked) {
-    setValues({ ...values, filmShort: checked });
+  function handleCheckBox(checked) {    
+    filmShort = checked;
   }
 
   function onGetMovies(evt) {
     evt.preventDefault();
-    props.onGetMovies(
-      values.filmName,
-      values.filmShort ? values.filmShort : false
-    );
+
+    props.onGetMovies(filmName, filmShort);
+    if (props.setSearchMoviesState) {
+      props.setSearchMoviesState({ filmName, filmShort });
+    } else {
+      props.setSearchSavedMoviesState({ filmName, filmShort });
+    }
+  }
+
+  // TODO: разрешить пустое поле в сохраненных фильмах
+
+  function validateFilmName() {
+    const filmNameInput = document.querySelector('.search-form__film-name');
+    if (!filmNameInput.value) {
+      filmNameInput.setCustomValidity('Нужно ввести ключевое слово');
+    } else {
+      filmNameInput.setCustomValidity('');
+    }
   }
 
   return (
@@ -28,17 +50,21 @@ function SearchForm(props) {
           className='search-form__form'
           name='search-form'
           onSubmit={onGetMovies}
+          onLoad={validateFilmName}
         >
           <input
             className='search-form__film-name'
             name='filmName'
             type='text'
+            defaultValue={filmName}
             placeholder='Фильм'
             required
             onChange={handleChange}
+            onInvalid={validateFilmName}
+            onInput={validateFilmName}
           ></input>
           <button className='search-form__submit' type='submit'></button>
-          <FilterCheckbox onChange={handleCheckBox} />
+          <FilterCheckbox onChange={handleCheckBox} filmShort={filmShort} />
         </form>
       </div>
     </section>
