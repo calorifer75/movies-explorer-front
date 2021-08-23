@@ -5,7 +5,7 @@ import MoviesCardList from '../MoviesCardList/MoviesCardList';
 import Footer from '../Footer/Footer';
 
 function SavedMovies(props) {
-  props.savedMovies.forEach(element => {
+  props.savedMovies.forEach((element) => {
     element.allowDelete = true;
   });
 
@@ -13,7 +13,10 @@ function SavedMovies(props) {
     <>
       <Header />
       <SearchForm />
-      <MoviesCardList renderMovies={props.savedMovies} />
+      <MoviesCardList
+        renderMovies={props.savedMovies}
+        onLikeButtonClick={props.onDeleteMovie}
+      />
       <div className='saved-movies__divider'></div>
       <Footer />
     </>

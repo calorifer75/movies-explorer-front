@@ -44,6 +44,18 @@ export function saveMovie(movie) {
   }).then(fetchHandle);
 }
 
+export function deleteMovie(id) {
+  const token = localStorage.getItem('token');
+  
+  return fetch(`${BASE_URL}/movies/${id}`, {
+    method: 'DELETE',
+    headers: {
+      "Content-Type": "application/json",
+      authorization: `Bearer ${token}`,
+    },
+  }).then(fetchHandle);
+}
+
 export function getSavedMovies() {
   const token = localStorage.getItem('token');
   

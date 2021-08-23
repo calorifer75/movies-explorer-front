@@ -15,7 +15,7 @@ function Movies(props) {
       <Header />
       <SearchForm onGetMovies={props.onGetMovies} />
       <MoviesCardList
-        onSaveMovie={props.onSaveMovie}
+        onLikeButtonClick={props.onSaveMovie}
         renderMovies={props.renderMovies}
         preloaderActive={props.preloaderActive}
         preloaderNotFound={props.preloaderNotFound}

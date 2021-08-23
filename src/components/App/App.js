@@ -39,11 +39,7 @@ function App() {
       })
       .catch((err) => {
         err.then((res) => {
-          if (res.validation) {
-            setServerErrorMsg(`Ошибка: ${res.validation.body.message}`);
-          } else {
-            setServerErrorMsg(res.message);
-          }
+          setServerErrorMsg('Ошибка! ' + res.message);
         });
       });
   }
@@ -56,12 +52,8 @@ function App() {
         handleLogin(email, password);
       })
       .catch((err) => {
-        err.then((res) => {
-          if (res.validation) {
-            setServerErrorMsg(`Ошибка: ${res.validation.body.message}`);
-          } else {
-            setServerErrorMsg(res.message);
-          }
+        err.then((res) => {          
+          setServerErrorMsg('Ошибка! ' + res.message);          
         });
       });
   }
@@ -113,11 +105,7 @@ function App() {
       })
       .catch((err) => {
         err.then((res) => {
-          if (res.validation) {
-            setServerErrorMsg(`Ошибка: ${res.validation.body.message}`);
-          } else {
-            setServerErrorMsg(res.message);
-          }
+          setServerErrorMsg('Ошибка! ' + res.message);
         });
       });
   }
@@ -160,7 +148,7 @@ function App() {
           if (savedMovies.find((savMov) => savMov.id === element.id)) {
             element.saved = true;
           } else element.saved = false;
-        });                
+        });
 
         setPreloaderActive(false);
         setPreloaderNotFound(f.length === 0);
@@ -194,12 +182,12 @@ function App() {
 
   // Обновление renderMovies при изменении movies
   React.useEffect(() => {
-    renderMovies.forEach(renMov => {
-      const mov = movies.find(m => m.id === renMov.id);
+    renderMovies.forEach((renMov) => {
+      const mov = movies.find((m) => m.id === renMov.id);
       Object.assign(renMov, mov);
     });
     setRenderMovies([...renderMovies]);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [movies]);
 
   // Получение сохраненных фильмов из своей базы
@@ -214,25 +202,21 @@ function App() {
           delete element.trailer;
 
           element.id = element.movieId;
-          delete element.movieId;          
+          delete element.movieId;
         });
 
         setSavedMovies(res);
       })
       .catch((error) => {
         error.then((res) => {
-          if (res.message.includes('selebrate')) {
-            setServerErrorMsg(res.validation.body.message);
-          } else {
-            setServerErrorMsg(res.message);
-          }
+          setServerErrorMsg('Ошибка! ' + res.message);
         });
       });
   }, []);
 
   // Сохранение фильма к себе в базу
-  async function handleSaveMovie(id) {
-    const movie = movies.find((element) => element.id === id);
+  async function handleSaveMovie({movieId}) {
+    const movie = movies.find((element) => element.id === movieId);
 
     const movieToSave = {
       country: movie.country,
@@ -251,16 +235,28 @@ function App() {
     try {
       await api.saveMovie(movieToSave);
       movie.saved = !movie.saved;
-      setMovies([...movies]);      
+      setMovies([...movies]);
       setSavedMovies([...savedMovies, movie]);
       localStorage.setItem('movies', JSON.stringify(movies));
     } catch (error) {
       error.then((res) => {
-        if (res.message.includes('selebrate')) {
-          setServerErrorMsg(res.validation.body.message);
-        } else {
-          setServerErrorMsg(res.message);
-        }
+        setServerErrorMsg('Ошибка! ' + res.message);
+      });
+    }
+  }
+
+  // Удаление фильма из своей базы
+  async function handleDeleteMovie({_id, movieId}) {
+    try {
+      await api.deleteMovie(_id);
+      setSavedMovies(savedMovies.filter((m) => m.id !== movieId));
+      const movie = movies.find((m) => m.id === movieId);
+      movie.saved = false;
+      setMovies([...movies]);
+      localStorage.setItem('movies', JSON.stringify(movies));
+    } catch (error) {
+      error.then((res) => {
+        setServerErrorMsg('Ошибка! ' + res.message);
       });
     }
   }
@@ -310,7 +306,10 @@ function App() {
             />
           </ProtectedRoute>
           <ProtectedRoute exact path='/saved-movies' loggedIn={loggedIn}>
-            <SavedMovies savedMovies={savedMovies} />
+            <SavedMovies
+              savedMovies={savedMovies}
+              onDeleteMovie={handleDeleteMovie}
+            />
           </ProtectedRoute>
           <ProtectedRoute exact path='/profile' loggedIn={loggedIn}>
             <Profile

@@ -1,8 +1,8 @@
 import './MoviesCard.css';
 
 function MoviesCard(props) {
-  function onSaveMovie() {
-    props.onSaveMovie(props.id);
+  function onLikeButtonClick() {
+    props.onLikeButtonClick({_id: props._id, movieId: props.id});
   }
 
   let saveButtonStyle = props.filmSaved
@@ -36,7 +36,7 @@ function MoviesCard(props) {
         <p className='movies-card__film-name'>{props.filmName}</p>
         <button
           className={`movies-card__save ${saveButtonStyle}`}
-          onClick={onSaveMovie}
+          onClick={onLikeButtonClick}
         ></button>
       </div>
 

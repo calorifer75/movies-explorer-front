@@ -15,13 +15,14 @@ function MoviesCardList(props) {
             <MoviesCard
               key={movie.id}
               id={movie.id}
+              _id={movie._id}
               filmSrc={movie.image.url}
               filmName={movie.nameRU}
               filmTime={movie.duration}
               filmTrailer={movie.trailerLink}
               filmSaved={movie.saved}
               allowDelete={movie.allowDelete}
-              onSaveMovie={props.onSaveMovie}
+              onLikeButtonClick={props.onLikeButtonClick}
             />
           );
         })}
