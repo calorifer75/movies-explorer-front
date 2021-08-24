@@ -3,20 +3,18 @@ import { Link } from 'react-router-dom';
 import logoImg from '../../images/logo.svg';
 import ServerErrorMsg from '../ServerErrorMsg/ServerErrorMsg';
 import CurrentUserContext from '../../contexts/CurrentUserContext';
+import { useFormWithValidation } from '../../utils/Validator';
 
 function Register(props) {
-  const [values, setValues] = React.useState({});
+  const { values, handleChange, errors, isValid, resetForm } =
+    useFormWithValidation();
 
-  const {setServerErrorMsg} = React.useContext(CurrentUserContext);
-  React.useEffect(() => {    
-    setServerErrorMsg('');
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // Управление инпутами
-  function handleChange(evt) {
-    setValues({ ...values, [evt.target.name]: evt.target.value });
-  }
+    const { setServerErrorMsg } = React.useContext(CurrentUserContext);
+    React.useEffect(() => {
+      setServerErrorMsg('');
+      resetForm();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
   function onRegister(evt) {
     evt.preventDefault();
@@ -48,8 +46,10 @@ function Register(props) {
                 id='userName'
                 placeholder='Имя'
                 required
+                pattern='^[А-Яа-яЁёA-Za-z\s-]+$'
                 onChange={handleChange}
               ></input>
+              <span className='error'>{errors.userName}</span>
             </div>
             <div className='login__form-line'>
               <label className='login__label' htmlFor='userEmail'>
@@ -64,25 +64,31 @@ function Register(props) {
                 required
                 onChange={handleChange}
               ></input>
+              <span className='error'>{errors.userEmail}</span>
             </div>
             <div className='login__form-line'>
               <label className='login__label' htmlFor='userPassword'>
                 Пароль
               </label>
               <input
-                className='login__input error_color'
+                className='login__input'
                 type='password'
                 name='userPassword'
                 id='userPassword'
                 placeholder='Пароль'
                 required
+                minLength='8'
                 onChange={handleChange}
               ></input>
-              <p className='error'>Что-то пошло не так...</p>
+              <span className='error'>{errors.userPassword}</span>
             </div>
           </div>
           <ServerErrorMsg />
-          <button className='login__submit' type='submit'>
+          <button
+            className={`login__submit ${isValid ? '' : 'login__submit_disabled'}`}
+            type='submit'
+            disabled={!isValid}            
+          >
             Зарегистрироваться
           </button>
         </form>

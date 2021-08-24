@@ -3,20 +3,18 @@ import { Link } from 'react-router-dom';
 import logoImg from '../../images/logo.svg';
 import ServerErrorMsg from '../ServerErrorMsg/ServerErrorMsg';
 import CurrentUserContext from '../../contexts/CurrentUserContext';
+import { useFormWithValidation } from '../../utils/Validator';
 
 function Login(props) {
-  const [values, setValues] = React.useState({});
-  
-  const {setServerErrorMsg} = React.useContext(CurrentUserContext);
-  React.useEffect(() => {    
+  const { values, handleChange, errors, isValid, resetForm } =
+    useFormWithValidation();
+
+  const { setServerErrorMsg } = React.useContext(CurrentUserContext);
+  React.useEffect(() => {
     setServerErrorMsg('');
+    resetForm();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  // Управление инпутами
-  function handleChange(evt) {
-    setValues({ ...values, [evt.target.name]: evt.target.value });
-  }
 
   function onLogin(evt) {
     evt.preventDefault();
@@ -50,6 +48,7 @@ function Login(props) {
                 placeholder='E-Mail'
                 onChange={handleChange}
               ></input>
+              <span className='error'>{errors.userEmail}</span>
             </div>
             <div className='login__form-line'>
               <label className='login__label' htmlFor='userPassword'>
@@ -62,14 +61,20 @@ function Login(props) {
                 id='userPassword'
                 placeholder='Пароль'
                 required
+                minLength='8'
                 onChange={handleChange}
               ></input>
+              <span className='error'>{errors.userPassword}</span>
             </div>
             <div className='login__divider'></div>
           </div>
-          <div style={{width: 'inherit'}}>
+          <div style={{ width: 'inherit' }}>
             <ServerErrorMsg />
-            <button className='login__submit' type='submit'>
+            <button
+              className={`login__submit ${isValid ? '' : 'login__submit_disabled'}`}
+              type='submit'
+              disabled={!isValid}
+            >
               Войти
             </button>
           </div>

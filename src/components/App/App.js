@@ -216,6 +216,10 @@ function App() {
 
   // Получение сохраненных фильмов из своей базы
   React.useEffect(() => {
+    if (!loggedIn) {
+      return;
+    }
+    
     api
       .getSavedMovies()
       .then((res) => {
@@ -236,7 +240,7 @@ function App() {
           setServerErrorMsg('Ошибка! ' + res.message);
         });
       });
-  }, []);
+  }, [loggedIn]);
 
   // Сохранение фильма к себе в базу
   async function handleSaveMovie({ movieId }) {
