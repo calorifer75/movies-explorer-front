@@ -1,0 +1,80 @@
+.movies-card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.movies-card__img {
+  object-fit: cover;
+  margin-bottom: 10px;
+}
+
+.movies-card__info-panel {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 29px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid #E8E8E8;
+}
+
+.movies-card__film-name {
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 15px;
+  margin: 0;
+  display: flex;
+  align-items: center;
+}
+
+.movies-card__save {
+  background-color: #F4F4F4;
+  border-radius: 50%;
+  border: none;
+  width: 24px;
+  height: 24px;
+  margin-left: 10px;
+  cursor: pointer;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.movies-card__save_color {
+  background-image: url(../../images/save-color.svg);
+}
+
+.movies-card__save_white {
+  background-image: url(../../images/save-white.svg);
+}
+
+.movies-card__save_x {
+  background-image: url(../../images/save-x.svg);
+}
+
+.movies-card__film-time {
+  font-size: 10px;
+  line-height: 12px;
+  color: #A0A0A0;
+  margin: 0;
+}
+
+@media screen and (min-width: 768px) {
+  .movies-card__img {
+    margin-bottom: 14px;
+  }
+
+  .movies-card__film-name {
+    font-size: 13px;
+    line-height: 16px;
+  }
+
+  .movies-card__film-time {
+    font-size: 11px;
+    line-height: 13px;
+  }
+}
+
+@media screen and (min-width: 1280px) {  
+  .movies-card__img {
+    width: 100%;
+  }
+}
