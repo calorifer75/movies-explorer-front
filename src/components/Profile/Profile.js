@@ -8,6 +8,7 @@ function Profile(props) {
   const [name, setName] = React.useState('');
   const [email, setEmail] = React.useState('');
   const [submitDisabled, setSubmitDisabled] = React.useState(false);
+  const [inputDisabled, setInputDisabled] = React.useState(false);
 
   // Получение инфы о пользователе из контекста
   const { currentUser, setServerErrorMsg, setUserMessage } =
@@ -23,6 +24,7 @@ function Profile(props) {
   React.useEffect(() => {
     setName(currentUser.name);
     setEmail(currentUser.email);
+    setInputDisabled(false);
   }, [currentUser]);
 
   // Необходимость блокировки сабмита
@@ -48,6 +50,7 @@ function Profile(props) {
 
   function onUpdateProfile(evt) {
     evt.preventDefault();
+    setInputDisabled(true);
     props.onUpdateProfile(name, email);
   }
 
@@ -61,7 +64,7 @@ function Profile(props) {
             className='profile__form'
             name='profileForm'
             autoComplete='off'
-            onSubmit={onUpdateProfile}
+            onSubmit={onUpdateProfile}            
           >
             <div style={{ width: 'inherit' }}>
               <div className='profile__form-line'>
@@ -76,6 +79,7 @@ function Profile(props) {
                   value={name || ''}
                   placeholder='Имя'
                   required
+                  disabled={inputDisabled}
                   onChange={handleChange}
                 ></input>
               </div>
@@ -91,6 +95,7 @@ function Profile(props) {
                   value={email || ''}
                   placeholder='E-mail'
                   required
+                  disabled={inputDisabled}
                   onChange={handleChange}
                 ></input>
               </div>
@@ -108,7 +113,7 @@ function Profile(props) {
                   `profile__submit ${
                   submitDisabled ? 'profile__submit_disabled' : ''}`
                 }
-                disabled={submitDisabled}
+                disabled={submitDisabled || inputDisabled}
                 type='submit'
               >
                 Редактировать

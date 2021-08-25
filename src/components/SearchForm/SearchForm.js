@@ -4,6 +4,8 @@ import FilterCheckbox from '../FilterCheckbox/FilterCheckbox';
 
 function SearchForm(props) {
   let filmName, filmShort;
+
+  const [inputDisabled, setInputDisabled] = React.useState(false);
   
   if (props.searchMoviesState) {
     filmName = props.searchMoviesState.filmName;
@@ -23,16 +25,16 @@ function SearchForm(props) {
 
   function onGetMovies(evt) {
     evt.preventDefault();
+    setInputDisabled(true);
 
-    props.onGetMovies(filmName, filmShort);
+    props.onGetMovies(filmName, filmShort, setInputDisabled);
+
     if (props.setSearchMoviesState) {
       props.setSearchMoviesState({ filmName, filmShort });
     } else {
       props.setSearchSavedMoviesState({ filmName, filmShort });
     }
   }
-
-  // TODO: разрешить пустое поле в сохраненных фильмах
 
   function validateFilmName() {
     const filmNameInput = document.querySelector('.search-form__film-name');
@@ -59,11 +61,16 @@ function SearchForm(props) {
             defaultValue={filmName}
             placeholder='Фильм'
             required
+            disabled={inputDisabled}
             onChange={handleChange}
             onInvalid={validateFilmName}
             onInput={validateFilmName}
           ></input>
-          <button className='search-form__submit' type='submit'></button>
+          <button
+            className='search-form__submit'
+            type='submit'
+            disabled={inputDisabled}
+          ></button>
           <FilterCheckbox onChange={handleCheckBox} filmShort={filmShort} />
         </form>
       </div>

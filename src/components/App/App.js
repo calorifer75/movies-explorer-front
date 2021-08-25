@@ -35,34 +35,37 @@ function App() {
     filmName: '',
     filmShort: false,
   });
-  const imagesServer = 'https://api.nomoreparties.co';  
+  const imagesServer = 'https://api.nomoreparties.co';
 
   // Нажатие кнопки "Вход"
-  function handleLogin(email, password) {
+  function handleLogin(email, password, setInputDisabled) {
     auth
       .login(email, password)
       .then((res) => {
         localStorage.setItem('token', res.token);
-        setLoggedIn(true);        
+        setLoggedIn(true);
+        setInputDisabled(false);
         history.push('/movies');
       })
       .catch((err) => {
         err.then((res) => {
           setServerErrorMsg('Ошибка! ' + res.message);
+          setInputDisabled(false);
         });
       });
   }
 
   // Нажатие кнопки "Регистрация"
-  function handleRegister(email, password, name) {
+  function handleRegister(email, password, name, setInputDisabled) {
     auth
       .register(email, password, name)
       .then(() => {
-        handleLogin(email, password);
+        handleLogin(email, password, setInputDisabled);
       })
       .catch((err) => {
         err.then((res) => {
           setServerErrorMsg('Ошибка! ' + res.message);
+          setInputDisabled(false);
         });
       });
   }
@@ -84,7 +87,7 @@ function App() {
       if (localStorage.getItem('token')) {
         const token = localStorage.getItem('token');
         auth.checkToken(token).then((res) => {
-          setLoggedIn(true);          
+          setLoggedIn(true);
         });
       }
     },
@@ -132,7 +135,7 @@ function App() {
   }
 
   // Фильтрация сохраненных фильмов
-  function handleFilterMovies(name, short) {
+  function handleFilterMovies(name, short, setInputDisabled) {
     const f = savedMovies.map((item) => {
       const nameMatch = item.nameRU.toUpperCase().includes(name.toUpperCase());
       const shortMatch = short ? parseInt(item.duration) <= 40 : true;
@@ -145,10 +148,11 @@ function App() {
     });
 
     setSavedMovies(f);
+    setInputDisabled(false);
   }
 
   // Получение фильмов от сервера
-  async function handleGetMovies(name, short) {
+  async function handleGetMovies(name, short, setInputDisabled) {
     setRenderMovies([]);
     setServerErrorMsg('');
     setPreloaderNotFound(false);
@@ -171,6 +175,7 @@ function App() {
           'Во время запроса произошла ошибка. Возможно, проблема с соединением ' +
             'или сервер недоступен.Подождите немного и попробуйте ещё раз'
         );
+        setInputDisabled(false);
       }
     }
 
@@ -199,6 +204,7 @@ function App() {
 
     setRenderMoviesFirstTime(f);
     setMovies(f);
+    setInputDisabled(false);
   }
 
   // получение фильмов из локального хранилища

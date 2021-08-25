@@ -10,6 +10,9 @@ function Login(props) {
     useFormWithValidation();
 
   const { setServerErrorMsg } = React.useContext(CurrentUserContext);
+
+  const [inputDisabled, setInputDisabled] = React.useState(false);
+
   React.useEffect(() => {
     setServerErrorMsg('');
     resetForm();
@@ -18,7 +21,8 @@ function Login(props) {
 
   function onLogin(evt) {
     evt.preventDefault();
-    props.onLogin(values.userEmail, values.userPassword);
+    setInputDisabled(true);
+    props.onLogin(values.userEmail, values.userPassword, setInputDisabled);
   }
 
   return (
@@ -45,6 +49,7 @@ function Login(props) {
                 name='userEmail'
                 id='userEmail'
                 required
+                disabled={inputDisabled}
                 placeholder='E-Mail'
                 onChange={handleChange}
               ></input>
@@ -61,6 +66,7 @@ function Login(props) {
                 id='userPassword'
                 placeholder='Пароль'
                 required
+                disabled={inputDisabled}
                 minLength='8'
                 onChange={handleChange}
               ></input>
@@ -71,9 +77,11 @@ function Login(props) {
           <div style={{ width: 'inherit' }}>
             <ServerErrorMsg />
             <button
-              className={`login__submit ${isValid ? '' : 'login__submit_disabled'}`}
+              className={`login__submit ${
+                isValid ? '' : 'login__submit_disabled'
+              }`}
               type='submit'
-              disabled={!isValid}
+              disabled={!isValid || inputDisabled}
             >
               Войти
             </button>

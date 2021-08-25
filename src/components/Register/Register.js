@@ -9,16 +9,25 @@ function Register(props) {
   const { values, handleChange, errors, isValid, resetForm } =
     useFormWithValidation();
 
-    const { setServerErrorMsg } = React.useContext(CurrentUserContext);
-    React.useEffect(() => {
-      setServerErrorMsg('');
-      resetForm();
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+  const { setServerErrorMsg } = React.useContext(CurrentUserContext);
+
+  const [inputDisabled, setInputDisabled] = React.useState(false);
+
+  React.useEffect(() => {
+    setServerErrorMsg('');
+    resetForm();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   function onRegister(evt) {
     evt.preventDefault();
-    props.onRegister(values.userEmail, values.userPassword, values.userName);
+    setInputDisabled(true);
+    props.onRegister(
+      values.userEmail,
+      values.userPassword,
+      values.userName,
+      setInputDisabled
+    );
   }
 
   return (
@@ -46,6 +55,7 @@ function Register(props) {
                 id='userName'
                 placeholder='Имя'
                 required
+                disabled={inputDisabled}
                 pattern='^[А-Яа-яЁёA-Za-z\s-]+$'
                 onChange={handleChange}
               ></input>
@@ -62,6 +72,7 @@ function Register(props) {
                 id='userEmail'
                 placeholder='E-Mail'
                 required
+                disabled={inputDisabled}
                 onChange={handleChange}
               ></input>
               <span className='error'>{errors.userEmail}</span>
@@ -77,6 +88,7 @@ function Register(props) {
                 id='userPassword'
                 placeholder='Пароль'
                 required
+                disabled={inputDisabled}
                 minLength='8'
                 onChange={handleChange}
               ></input>
@@ -85,9 +97,11 @@ function Register(props) {
           </div>
           <ServerErrorMsg />
           <button
-            className={`login__submit ${isValid ? '' : 'login__submit_disabled'}`}
+            className={`login__submit ${
+              isValid ? '' : 'login__submit_disabled'
+            }`}
             type='submit'
-            disabled={!isValid}            
+            disabled={!isValid || inputDisabled}
           >
             Зарегистрироваться
           </button>
