@@ -14,6 +14,7 @@ import * as api from '../../utils/MainApi';
 import * as moviesApi from '../../utils/MoviesApi';
 import CurrentUserContext from '../../contexts/CurrentUserContext';
 import ProtectedRoute from '../ProtecterRoute/ProtectedRoute';
+import * as consts from '../../config/constants';
 
 function App() {
   const history = useHistory();
@@ -328,12 +329,23 @@ function App() {
 
     const length = renderMovies.length;
 
-    if (document.documentElement.clientWidth < 768) {
-      setRenderMovies([...renderMovies, ...movies.slice(length, length + 5)]);
-    } else if (document.documentElement.clientWidth < 1280) {
-      setRenderMovies([...renderMovies, ...movies.slice(length, length + 2)]);
+    if (document.documentElement.clientWidth < consts.SCREEN_MEDIUM /*768*/) {
+      setRenderMovies([
+        ...renderMovies,
+        ...movies.slice(length, length + consts.FILMS_FOR_SMALL /*5*/),
+      ]);
+    } else if (
+      document.documentElement.clientWidth < consts.SCREEN_LARGE /*1280*/
+    ) {
+      setRenderMovies([
+        ...renderMovies,
+        ...movies.slice(length, length + consts.FILMS_FOR_MEDIUM /*2*/),
+      ]);
     } else {
-      setRenderMovies([...renderMovies, ...movies.slice(length, length + 4)]);
+      setRenderMovies([
+        ...renderMovies,
+        ...movies.slice(length, length + consts.FILMS_FOR_LARGE /*4*/),
+      ]);
     }
   }
 
