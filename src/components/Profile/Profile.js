@@ -9,10 +9,12 @@ function Profile(props) {
   const [email, setEmail] = React.useState('');
 
   // Получение инфы о пользователе из контекста
-  const { currentUser, setServerErrorMsg } =
+  const { currentUser, setServerErrorMsg, setUserMessage } =
     React.useContext(CurrentUserContext);
+  
   React.useEffect(() => {
     setServerErrorMsg('');
+    setUserMessage('');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -92,7 +94,7 @@ function Profile(props) {
                 alignItems: 'inherit',
               }}
             >
-              <ServerErrorMsg centered={true}/>
+              <ServerErrorMsg centered={true} />
               <button className='profile__submit' type='submit'>
                 Редактировать
               </button>

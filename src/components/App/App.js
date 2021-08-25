@@ -18,6 +18,7 @@ import ProtectedRoute from '../ProtecterRoute/ProtectedRoute';
 function App() {
   const history = useHistory();
   const [currentUser, setCurrentUser] = React.useState({ name: '', email: '' });
+  const [userMessage, setUserMessage] = React.useState('');
   const [loggedIn, setLoggedIn] = React.useState(false);
   const [serverErrorMsg, setServerErrorMsg] = React.useState('');
   const [movies, setMovies] = React.useState([]);
@@ -71,6 +72,7 @@ function App() {
     if (localStorage.getItem('token')) {
       localStorage.removeItem('token');
       localStorage.removeItem('movies');
+      localStorage.removeItem('all-movies');
       setLoggedIn(false);
       history.push('/');
     }
@@ -109,7 +111,7 @@ function App() {
       .setUserInfo(name, email)
       .then((userInfo) => {
         setCurrentUser(userInfo);
-        history.goBack();
+        setUserMessage('Сохранение профиля прошло успешно');
       })
       .catch((err) => {
         err.then((res) => {
@@ -146,50 +148,57 @@ function App() {
   }
 
   // Получение фильмов от сервера
-  function handleGetMovies(name, short) {
+  async function handleGetMovies(name, short) {
     setRenderMovies([]);
     setServerErrorMsg('');
     setPreloaderNotFound(false);
     setPreloaderActive(true);
-    moviesApi
-      .getMovies()
-      .then((res) => {
-        // Фильтрация полученных фильмов
-        const f = res.filter((item) => {
-          const nameMatch = item.nameRU
-            .toUpperCase()
-            .includes(name.toUpperCase());
-          const shortMatch = short ? parseInt(item.duration) <= 40 : true;
-          return nameMatch && shortMatch;
-        });
 
-        // Дополнение массива нужной информацией
-        f.forEach((element) => {
-          element.image.url = imagesServer + element.image.url;
-          element.image.formats.thumbnail.url =
-            imagesServer + element.image.formats.thumbnail.url;
+    let allFilms = [];
 
-          if (savedMovies.find((savMov) => savMov.id === element.id)) {
-            element.saved = true;
-          } else element.saved = false;
-        });
-
-        setPreloaderActive(false);
-        setPreloaderNotFound(f.length === 0);
-
-        localStorage.setItem('movies', JSON.stringify(f));
-
-        setRenderMoviesFirstTime(f);
-        setMovies(f);
-      })
-      .catch((error) => {
+    // Если в хранилище уже есть фильмы, забираем отттуда,
+    // а если нет - делаем запрос на сервер
+    if (localStorage.getItem('all-movies')) {
+      allFilms = JSON.parse(localStorage.getItem('all-movies'));
+    } else {
+      try {
+        allFilms = await moviesApi.getMovies();
+        localStorage.setItem('all-movies', JSON.stringify(allFilms));
+      } catch (error) {
         setPreloaderActive(false);
         setPreloaderNotFound(false);
         setServerErrorMsg(
           'Во время запроса произошла ошибка. Возможно, проблема с соединением ' +
             'или сервер недоступен.Подождите немного и попробуйте ещё раз'
         );
-      });
+      }
+    }
+
+    // Фильтрация полученных фильмов
+    const f = allFilms.filter((item) => {
+      const nameMatch = item.nameRU.toUpperCase().includes(name.toUpperCase());
+      const shortMatch = short ? parseInt(item.duration) <= 40 : true;
+      return nameMatch && shortMatch;
+    });
+
+    // Дополнение массива нужной информацией
+    f.forEach((element) => {
+      element.image.url = imagesServer + element.image.url;
+      element.image.formats.thumbnail.url =
+        imagesServer + element.image.formats.thumbnail.url;
+
+      if (savedMovies.find((savMov) => savMov.id === element.id)) {
+        element.saved = true;
+      } else element.saved = false;
+    });
+
+    setPreloaderActive(false);
+    setPreloaderNotFound(f.length === 0);
+
+    localStorage.setItem('movies', JSON.stringify(f));
+
+    setRenderMoviesFirstTime(f);
+    setMovies(f);
   }
 
   // получение фильмов из локального хранилища
@@ -219,7 +228,7 @@ function App() {
     if (!loggedIn) {
       return;
     }
-    
+
     api
       .getSavedMovies()
       .then((res) => {
@@ -324,7 +333,14 @@ function App() {
 
   return (
     <CurrentUserContext.Provider
-      value={{ currentUser, loggedIn, serverErrorMsg, setServerErrorMsg }}
+      value={{
+        currentUser,
+        loggedIn,
+        serverErrorMsg,
+        setServerErrorMsg,
+        userMessage,
+        setUserMessage,
+      }}
     >
       <div className='page'>
         <Switch>

@@ -3,15 +3,18 @@ import CurrentUserContext from '../../contexts/CurrentUserContext';
 import './ServerErrorMsg.css';
 
 function ServerErrorMsg(props) {
-  const { serverErrorMsg } = React.useContext(CurrentUserContext);
+  const { serverErrorMsg, userMessage } = React.useContext(CurrentUserContext);
+
+  const className =
+    `server-error-msg 
+    ${props.centered ? 'server-error-msg_centered ' : ' '}
+    ${ serverErrorMsg ? 'server-error-msg_error-color ' : 'server-error-msg_message-color '}`;
 
   return (
     <p
-      className={`server-error-msg ${
-        props.centered ? 'server-error-msg_centered' : ''
-      }`}
+      className={className}
     >
-      {serverErrorMsg}
+      {serverErrorMsg ? serverErrorMsg : userMessage}
     </p>
   );
 }

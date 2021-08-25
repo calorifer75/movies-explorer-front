@@ -3,8 +3,7 @@
   font-style: normal;
   font-weight: normal;
   font-size: 13px;
-  line-height: 16px;
-  color: #EE3465;
+  line-height: 16px;  
   min-height: 50px;
   width: 100%;
   margin: 0 0 5px 0;
@@ -15,4 +14,12 @@
 
 .server-error-msg_centered {
   text-align: center;
+}
+
+.server-error-msg_error-color {
+  color: #EE3465;
+}
+
+.server-error-msg_message-color {
+  color: #3456F3;
 }
