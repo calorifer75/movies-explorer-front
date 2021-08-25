@@ -35,7 +35,7 @@ function App() {
     filmName: '',
     filmShort: false,
   });
-  const imagesServer = 'https://api.nomoreparties.co';
+  const imagesServer = 'https://api.nomoreparties.co';  
 
   // Нажатие кнопки "Вход"
   function handleLogin(email, password) {
@@ -43,7 +43,7 @@ function App() {
       .login(email, password)
       .then((res) => {
         localStorage.setItem('token', res.token);
-        setLoggedIn(true);
+        setLoggedIn(true);        
         history.push('/movies');
       })
       .catch((err) => {
@@ -84,7 +84,7 @@ function App() {
       if (localStorage.getItem('token')) {
         const token = localStorage.getItem('token');
         auth.checkToken(token).then((res) => {
-          setLoggedIn(true);
+          setLoggedIn(true);          
         });
       }
     },
