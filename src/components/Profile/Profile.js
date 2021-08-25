@@ -7,11 +7,12 @@ import ServerErrorMsg from '../ServerErrorMsg/ServerErrorMsg';
 function Profile(props) {
   const [name, setName] = React.useState('');
   const [email, setEmail] = React.useState('');
+  const [submitDisabled, setSubmitDisabled] = React.useState(false);
 
   // Получение инфы о пользователе из контекста
   const { currentUser, setServerErrorMsg, setUserMessage } =
     React.useContext(CurrentUserContext);
-  
+
   React.useEffect(() => {
     setServerErrorMsg('');
     setUserMessage('');
@@ -24,14 +25,21 @@ function Profile(props) {
     setEmail(currentUser.email);
   }, [currentUser]);
 
+  // Необходимость блокировки сабмита
+  React.useEffect(() => {
+    setSubmitDisabled(name === currentUser.name && email === currentUser.email);
+  }, [name, email, currentUser.name, currentUser.email]);
+
   // Изменение инпутов
   function handleChange(evt) {
     switch (evt.target.name) {
       case 'userName':
         setName(evt.target.value);
+        setUserMessage('');
         break;
       case 'userEmail':
         setEmail(evt.target.value);
+        setUserMessage('');
         break;
       default:
         break;
@@ -95,7 +103,14 @@ function Profile(props) {
               }}
             >
               <ServerErrorMsg centered={true} />
-              <button className='profile__submit' type='submit'>
+              <button
+                className={
+                  `profile__submit ${
+                  submitDisabled ? 'profile__submit_disabled' : ''}`
+                }
+                disabled={submitDisabled}
+                type='submit'
+              >
                 Редактировать
               </button>
             </div>

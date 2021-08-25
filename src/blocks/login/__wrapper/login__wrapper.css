@@ -1,5 +1,8 @@
 .login__wrapper {
-  margin: 56px 30px 30px 30px;
+  /* margin: 56px 30px 30px 30px; */
+  box-sizing: border-box;
+  padding: 56px 30px 30px 30px;
+  width: 100%;
   display: flex;
   flex-direction: column;
   flex: 1 0 auto;
