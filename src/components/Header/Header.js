@@ -4,11 +4,10 @@ import './Header.css';
 import logoImg from '../../images/logo.svg';
 import Menu from '../Menu/Menu';
 import Navigation from '../Navigation/Navigation';
+import CurrentUserContext from '../../contexts/CurrentUserContext';
 
 function Header(props) {
-  const registerLinkHidden = props.registerLinkHidden ? 'hidden' : '';
-  const loginLinkHidden = props.loginLinkHidden ? 'hidden' : '';
-  const menuBtnHidden = props.menuBtnHidden ? 'hidden' : '';
+  const { loggedIn } = React.useContext(CurrentUserContext);
 
   // Состояние окна навигации
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
@@ -32,26 +31,26 @@ function Header(props) {
         <div className='header__right-side'>
           <Link
             to='/signup'
-            className={`header__register-link ${registerLinkHidden}`}
+            className={`header__register-link ${loggedIn ? 'hidden' : ''}`}            
           >
             Регистрация
           </Link>
 
           <Link
-            className={`header__login-link ${loginLinkHidden}`}
+            className={`header__login-link ${loggedIn ? 'hidden' : ''}`}
             to='/signin'
           >
             Войти
           </Link>
 
           <button
-            className={`header__menu-btn ${menuBtnHidden}`}
+            className={`header__menu-btn ${loggedIn ? '' : 'hidden'}`}
             type='button'
             onClick={handleMenuOpenClick}
           ></button>
 
-          <nav className='header__nav'>
-            <Navigation navigationHidden={props.navigationHidden} />
+          <nav className={`header__nav ${loggedIn ? '' : 'hidden'}`}>
+            <Navigation />
           </nav>
         </div>
       </div>

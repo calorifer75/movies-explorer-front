@@ -2,10 +2,8 @@ import { Link } from 'react-router-dom';
 import './Navigation.css';
 
 function Navigation(props) {
-  const navigationHidden = props.navigationHidden ? 'hidden' : '';
-
   return (
-    <ul className={`navigation ${navigationHidden}`}>
+    <ul className={`navigation`}>
       <div className='navigation__wrapper'>
         <li className='navigation__item'>
           <Link

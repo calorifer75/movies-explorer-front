@@ -1,12 +1,18 @@
+import React from 'react';
 import './FilterCheckbox.css';
 
-function FilterCheckbox() {
+function FilterCheckbox(props) {
+  function onChange(evt) {
+    props.onChange(evt.target.checked);
+  }
+
   return (
     <label className='filter-checkbox'>
       <input
         id='short-meters'
         type='checkbox'
-        defaultValue='false'
+        defaultChecked={props.filmShort}
+        onChange={onChange}
       />
       <span className='filter-checkbox__box-green'>
         <span className='filter-checkbox__box-white'></span>

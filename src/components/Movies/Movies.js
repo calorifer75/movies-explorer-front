@@ -5,75 +5,29 @@ import MoviesCardList from '../MoviesCardList/MoviesCardList';
 import MoviesMoreCards from '../MoviesMoreCards/MoviesMoreCards';
 import Footer from '../Footer/Footer';
 
-// временно, на период верстки
-import filmOneSrc from '../../images/film-1.jpg';
-import filmTwoSrc from '../../images/film-2.jpg';
-const cardList = [
-  {
-    filmSrc: filmOneSrc,
-    filmName: '33 слова о дизайне',
-    filmTime: '1ч 42м',
-    saved: true,
-    allowDelete: false,
-  },
-  {
-    filmSrc: filmTwoSrc,
-    filmName: 'В погоне за Бенкси',
-    filmTime: '1ч 42м',
-    saved: false,
-    allowDelete: false,
-  },
-  {
-    filmSrc: filmOneSrc,
-    filmName: '33 слова о дизайне',
-    filmTime: '1ч 42м',
-    saved: true,
-    allowDelete: false,
-  },
-  {
-    filmSrc: filmTwoSrc,
-    filmName: 'В погоне за Бенкси',
-    filmTime: '1ч 42м',
-    saved: false,
-    allowDelete: false,
-  },
-  {
-    filmSrc: filmOneSrc,
-    filmName: '33 слова о дизайне',
-    filmTime: '1ч 42м',
-    saved: true,
-    allowDelete: false,
-  },
-  {
-    filmSrc: filmTwoSrc,
-    filmName: 'В погоне за Бенкси',
-    filmTime: '1ч 42м',
-    saved: false,
-    allowDelete: false,
-  },
-  {
-    filmSrc: filmOneSrc,
-    filmName: '33 слова о дизайне',
-    filmTime: '1ч 42м',
-    saved: true,
-    allowDelete: false,
-  },
-  {
-    filmSrc: filmTwoSrc,
-    filmName: 'В погоне за Бенкси',
-    filmTime: '1ч 42м',
-    saved: false,
-    allowDelete: false,
-  },
-];
+function Movies(props) {
+  props.renderMovies.forEach(element => {
+    element.allowDelete = false;
+  });
 
-function Movies() {
   return (
     <>
-      <Header registerLinkHidden={true} loginLinkHidden={true} />
-      <SearchForm />
-      <MoviesCardList cardList={cardList} />
-      <MoviesMoreCards />
+      <Header />
+      <SearchForm
+        onGetMovies={props.onGetMovies}
+        searchMoviesState={props.searchMoviesState}
+        setSearchMoviesState={props.setSearchMoviesState}
+      />
+      <MoviesCardList
+        onLikeButtonClick={props.onSaveMovie}
+        renderMovies={props.renderMovies}
+        preloaderActive={props.preloaderActive}
+        preloaderNotFound={props.preloaderNotFound}
+      />
+      <MoviesMoreCards
+        renderMoreMovies={props.renderMoreMovies}
+        displayMoreMovies={props.displayMoreMovies}        
+      />
       <Footer />
     </>
   );

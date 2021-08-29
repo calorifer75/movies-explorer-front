@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   flex: 1 0 auto;
-  width: 100%;  
+  width: 100%;
 }
 
 .profile__wrapper {
@@ -11,7 +11,7 @@
   flex-direction: column;
   flex: 1 0 auto;
   align-items: center;
-  justify-content: space-between;  
+  justify-content: space-between;
 }
 
 .profile__title {
@@ -28,15 +28,15 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  align-items: center;  
-  margin-bottom: 16px;
+  align-items: center;
+  margin-bottom: 10px;
 }
 
 .profile__form-line {
   display: flex;
   justify-content: space-between;
   padding-bottom: 16px;
-  border-bottom: 1px solid #E8E8E8;
+  border-bottom: 1px solid #e8e8e8;
   margin-bottom: 17px;
 }
 
@@ -56,7 +56,7 @@
   font-style: normal;
   font-weight: 500;
   font-size: 11px;
-  line-height: 13px
+  line-height: 13px;
 }
 
 .profile__input {
@@ -65,32 +65,50 @@
   text-align: right;
   border: none;
   border-bottom: 1px solid transparent;
-  outline: none;  
+  outline: none;
   width: 100%;
   font-family: Inter, Arial, Helvetica, sans-serif;
   font-style: normal;
   font-weight: normal;
   font-size: 11px;
   line-height: 13px;
-  transition: border .3s linear;
+  transition: border 0.3s linear;
 }
 
 .profile__input:hover {
-  border-bottom: 1px solid #3456F3;
+  border-bottom: 1px solid #3456f3;
 }
 
 .profile__input:focus {
-  border-bottom: 1px solid #3456F3;
+  border-bottom: 1px solid #3456f3;
 }
 
-.profile__submit {  
+.profile__submit {
+  width: fit-content;
   cursor: pointer;
   border: none;
+  border-bottom: 1px solid transparent;
   font-family: Inter, Arial, Helvetica, sans-serif;
   font-style: normal;
   font-weight: normal;
   font-size: 12px;
-  line-height: 15px;  
+  line-height: 15px;
+  padding: 0 0 6px 0;
+  margin-top: 10px;
+  transition: border 0.2s linear;
+}
+
+.profile__submit_disabled {
+  color: lightslategray;
+  cursor: inherit;
+}
+
+.profile__submit:hover {
+  border-bottom: 1px solid #000;
+}
+
+.profile__submit_disabled:hover {
+  border-bottom: 1px solid transparent;
 }
 
 .profile__exit {
@@ -99,9 +117,16 @@
   font-weight: 500;
   font-size: 12px;
   line-height: 15px;
-  color: #EE3465;
+  color: #ee3465;
   cursor: pointer;
+  padding: 0 0 6px 0;
   border: none;
+  border-bottom: 1px solid transparent;
+  transition: border 0.2s linear;
+}
+
+.profile__exit:hover {
+  border-bottom: 1px solid #ee3465;
 }
 
 @media screen and (min-width: 768px) {
